@@ -1,0 +1,1 @@
+Display 1 letter at a time on neopixels. This is a learning/PoC for a larger project.
