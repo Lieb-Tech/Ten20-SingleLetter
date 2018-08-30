@@ -13,6 +13,7 @@
  #define DEBUG_PRINT(x)
 #endif
 
+// left padding 
 #defin LEFTPAD 2
 
 // time between display updates
