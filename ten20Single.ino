@@ -13,19 +13,26 @@
  #define DEBUG_PRINT(x)
 #endif
 
+#defin LEFTPAD 2
+
 // time between display updates
-#define WAIT 5000
+#define WAIT 2000
+
 // Pixels across 
 #define WIDTH 20
+
 // Pixels up/down
 #define HEIGHT 6
+
 // Arduino pin for display data
 #define PIN 6
 
-#define TOTALLED 60
+// Number of pixels connected
+#define TOTALLED 120
 
-// max number of letters to display
+// max # of letters to display
 #define SENTENCELENGTH 20
+
 // max # pixels wide in letter
 #define LETTERWIDTH 5
 
@@ -45,20 +52,22 @@ character charA, charB, charC, charD, charE, charH, charL, charO, charR, charT, 
 // 0-9 53-62
 // space, period, exclaim, comma, hashtag, dash, colon, slash, at? 63-70
 
-// led display driver
+// init the led display driver
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(TOTALLED, PIN, NEO_GRB + NEO_KHZ800);
 
 // default for LED ON / off
-uint32_t ON = strip.Color(255, 0, 0);   // pixel on = red (eventually allow words to have different colors)
+uint32_t ON = strip.Color(200, 0, 0);   // pixel on = red (eventually allow words to have different colors)
 uint32_t OFF = strip.Color(0, 0, 0);    // pixel off 
 
-// alphabet converted into on/off matrix
+// characters converted into on/off matrix
 bool ledData[HEIGHT][(SENTENCELENGTH * LETTERWIDTH)];
 
 // current index in ledData going left to right
 uint8_t currentIndex; 
-// last piece of parsed data in array (array might be longer than configured data
+
+// last piece of parsed data in array (array size likely larger than needs to be, so no reason for loop to look at "empty" data)
 uint8_t maxIndex; 
+
 
 uint8_t lettersInSentence; 
 
@@ -85,16 +94,17 @@ void setup() {
   buildChars();
   
   DEBUG_PRINTLN("load sentence");
-  sentence[0] = charH;
-  sentence[1] = charSPACE;
-  sentence[2] = charE;
-  sentence[3] = charSPACE;
-  sentence[4] = charL;
-  sentence[5] = charSPACE;
-  sentence[6] = charL;
-  sentence[7] = charSPACE;
-  sentence[8] = charO;
-  sentence[9] = charEOL;
+  sentence[0] = charSPACE;
+  sentence[1] = charH;
+  sentence[2] = charSPACE;
+  sentence[3] = charE;
+  sentence[4] = charSPACE;
+  sentence[5] = charL;
+  sentence[6] = charSPACE;
+  sentence[7] = charL;
+  sentence[8] = charSPACE;
+  sentence[9] = charO;
+  sentence[10] = charEOL;
 
   lettersInSentence = 10;
   /*
@@ -127,6 +137,7 @@ void setup() {
 
   DEBUG_PRINT("Total leds: ");
   DEBUG_PRINTLN(TOTALLED);
+  delay(1000);
 }
 
 void loop() {
@@ -149,6 +160,9 @@ void loop() {
       if (r < TOTALLED)
         strip.setPixelColor(r, OFF);
     }
+
+    if (currentIndex % 2 == 0)
+      strip.setPixelColor(TOTALLED - 1, strip.Color(0, 0, 200));
     
     for (int r = 0; r < HEIGHT; r++) 
     {
@@ -180,11 +194,11 @@ void loop() {
         bool isOn = (cur.pixelData & offset) == offset;
         DEBUG_PRINT(" - on");
         DEBUG_PRINT(isOn);        
-        DEBUG_PRINT(" ; pos = ");
-        int pos = (r * WIDTH) + c;
-        DEBUG_PRINT(pos);
+        DEBUG_PRINT(" ; pos: ");
+        int pos = (r * WIDTH) + c + LEFTPAD;             
         if (isOn) {          
-          //if (shifted < TOTALLED) 
+            DEBUG_PRINT(":");
+            DEBUG_PRINT(pos);                        
             strip.setPixelColor(pos, ON);
          } 
       }
