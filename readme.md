@@ -1,4 +1,4 @@
-# Ten20 
+# ten20 
 A first step in a project to display text and animations across a 20x10 array of NeoPixels.
 
 ## Proof of concept
